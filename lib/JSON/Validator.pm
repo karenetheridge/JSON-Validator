@@ -134,6 +134,7 @@ sub coerce {
 
 sub get {
   my ($self, $pointer) = @_;
+# ew ew ew.
   $pointer
     = [
       ref $pointer ? @$pointer
@@ -1329,6 +1330,8 @@ as L<Mojo::JSON> or other JSON parsers.
 
 =head2 get
 
+  my $sub_schema = $validator->get("http://foo.com/bar.json#/x/y");
+  my $sub_schema = $validator->get("foo.json#/x/y");
   my $sub_schema = $validator->get("/x/y");
   my $sub_schema = $validator->get(["x", "y"]);
 

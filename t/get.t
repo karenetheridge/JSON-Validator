@@ -6,6 +6,7 @@ my $jv = JSON::Validator->new->schema(
   {
     foo => [{y => 'foo'}],
     bar => [{y => 'first'}, {y => 'second'}, {z => 'zzz'}],
+
   }
 );
 
@@ -21,5 +22,22 @@ is_deeply $jv->get([undef, undef, 'y']), [['first', 'second', undef], ['foo']],
   'get /undef/undef/y';
 is_deeply $jv->get([undef, undef, 'y'])->flatten,
   ['first', 'second', undef, 'foo'], 'get /undef/undef/y flatten';
+ 
+$jv = JSON::Validator->new->schema(
+  {
+    baz => { '$ref' => 'http://json-schema.org/draft-07/schema#/definitions/nonNegativeInteger' },
+  }
+);
+
+use Data::Dumper;
+local $Data::Dumper::Sortkeys = 1;
+local $Data::Dumper::Maxdepth = 5;
+print STDERR "### jv is ", Dumper($jv);
+
+is_deeply $jv->get('http://json-schema.org/draft-07/schema#/definitions/nonNegativeInteger'),
+    { minimum => 0, type => 'integer' },
+    'get a reference from a schema we already loaded (when resolving $refs)';
+
+# also support this? $jv->get('http://json-schema.org/draft-07/schema', ['definitions','nonNegativeInteger']);
 
 done_testing;
