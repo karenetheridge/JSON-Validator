@@ -238,10 +238,11 @@ sub _definitions_key {
 
   # Must mask path to file on disk
   my $key       = $ref->fqn;
-  my $spec_path = (split '#', $key)[0];
+  my ($spec_path, $name) = split '#', $key;
   if (-e $spec_path) {
     $key = sprintf '%s-%s', substr(sha1_sum($key), 0, 10),
       path($spec_path)->basename;
+    $key .= '-'.path($name)->basename if $name;
   }
 
   # Fallback or nicer path name

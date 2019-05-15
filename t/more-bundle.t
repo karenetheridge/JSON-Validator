@@ -181,17 +181,17 @@ my @tests = (
                 return 1 if
                     (eq_deeply($got->{dupe_name}, { type => 'integer' })
                      and eq_deeply($got->{$other_key}, { type => 'string' })
-                     and eq_deeply($other_key, re(qr/-more-bundle2_yaml$/)))
+                     and eq_deeply($other_key, re(qr/-more-bundle2_yaml-dupe_name$/)))
                  or ((eq_deeply($got->{dupe_name}, { type => 'string' })
                      and eq_deeply($got->{$other_key}, { type => 'integer' })
-                     and eq_deeply($other_key, re(qr/-more-bundle_yaml$/))));
+                     and eq_deeply($other_key, re(qr/-more-bundle_yaml-dupe_name$/))));
                 return (0, 'uh oh, got: '.(Test::More::explain($got))[0]);
             }),
             # begin i_contain_refs_to_same_named_definitions definition
             type => 'object',
             properties => {
-                foo => { '$ref' => re(/^\/definitions\/(dupe_name|\w+-more-bundle_yaml)$/) },
-                bar => { '$ref' => re(/^\/definitions\/(dupe_name|\w+-more-bundle2_yaml)/) },
+                foo => { '$ref' => re(/^\/definitions\/(\w+-more-bundle_yaml-)?dupe_name$/) },
+                bar => { '$ref' => re(/^\/definitions\/(\w+-more-bundle2_yaml-)?dupe_name$/) },
             },
         },
         'when encountering references that have the same root name, one is renamed',
