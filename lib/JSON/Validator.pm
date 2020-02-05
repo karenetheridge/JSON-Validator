@@ -41,6 +41,8 @@ sub S {
   Mojo::Util::md5_sum(Data::Dumper->new([@_])->Sortkeys(1)->Useqq(1)->Dump);
 }
 
+sub ISA { blessed($_[0]) && $_[0]->isa($_[1]) }
+
 has cache_paths => sub {
   return [split(/:/, $ENV{JSON_VALIDATOR_CACHE_PATH} || ''),
     $BUNDLED_CACHE_DIR];
@@ -511,9 +513,7 @@ sub _resolve {
   $self->{level}++;
   $self->_register_schema($schema, $id);
 
-  my @topics
-    = ([$schema, UNIVERSAL::isa($id, 'Mojo::File') ? $id : Mojo::URL->new($id)
-    ]);
+  my @topics = ([$schema, ISA($id, 'Mojo::File') ? $id : Mojo::URL->new($id)]);
   while (@topics) {
     my ($topic, $base) = @{shift @topics};
 
@@ -602,7 +602,7 @@ sub _validate {
   my ($seen_addr, $to_json, $type);
 
   # Do not validate against "default" in draft-07 schema
-  return if blessed $schema and $schema->isa('JSON::PP::Boolean');
+  return if ISA($schema, 'JSON::PP::Boolean');
 
   $schema    = $self->_ref_to_schema($schema) if $schema->{'$ref'};
   $seen_addr = join ':', refaddr($schema),
