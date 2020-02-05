@@ -1530,7 +1530,8 @@ the call/inheritance tree.
 =item * Any other URL
 
 An URL (without a recognized scheme) will be treated as a path to a file on
-disk.
+disk.  If it doesn't exist, then as a final fallback, the path will be issued as a GET request
+to the L<Mojolicious> app reachable through the provided L<useragent|/ua>.
 
 =back
 
