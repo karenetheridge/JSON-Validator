@@ -517,10 +517,10 @@ sub _resolve {
   while (@topics) {
     my ($topic, $base) = @{shift @topics};
 
-    if (UNIVERSAL::isa($topic, 'ARRAY')) {
+    if (ref $topic eq 'ARRAY') {
       push @topics, map { [$_, $base] } @$topic;
     }
-    elsif (UNIVERSAL::isa($topic, 'HASH')) {
+    elsif (ref $topic eq 'HASH') {
       push @refs, [$topic, $base] and next
         if $topic->{'$ref'} and !ref $topic->{'$ref'};
 
@@ -889,7 +889,7 @@ sub _validate_type_array {
         [array => additionalItems => int(@$data), int(@rules)];
     }
   }
-  elsif (UNIVERSAL::isa($schema->{items}, 'HASH')) {
+  elsif (ref $schema->{items} eq 'HASH') {
     for my $i (0 .. @$data - 1) {
       push @errors, $self->_validate($data->[$i], "$path/$i", $schema->{items});
     }
@@ -1009,7 +1009,7 @@ sub _validate_type_object {
     ? $schema->{additionalProperties}
     : {};
   if ($additional) {
-    $additional = {} unless UNIVERSAL::isa($additional, 'HASH');
+    $additional = {} unless ref $additional eq 'HASH';
     $rules{$_} ||= [$additional] for @dkeys;
   }
   elsif (my @k = grep { !$rules{$_} } @dkeys) {
@@ -1028,7 +1028,7 @@ sub _validate_type_object {
       next unless exists $data->{$k};
       my @e = $self->_validate($data->{$k}, _path($path, $k), $r);
       push @errors, @e;
-      next if @e or !UNIVERSAL::isa($r, 'HASH');
+      next if @e or ref $r ne 'HASH';
       push @errors,
         $self->_validate_type_enum($data->{$k}, _path($path, $k), $r)
         if $r->{enum};
