@@ -30,7 +30,7 @@ for my $file (sort $test_suite->list->each) {
       my $schema = encode_json $group->{schema};
       my $descr  = "$group->{description} - $test->{description}";
 
-      next if $test_only_re and $descr !~ /$test_only_re/;
+      next          if $test_only_re and $descr !~ /$test_only_re/;
       diag <<"HERE" if $test_only_re;
 ---
 description:  $descr

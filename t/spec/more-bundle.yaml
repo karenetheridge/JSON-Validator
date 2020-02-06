@@ -57,9 +57,9 @@ definitions:
   i_contain_refs_to_same_named_definitions:
     type: object
     properties:
-      foo:
+      a:
         $ref: /definitions/dupe_name
-      bar:
+      b:
         $ref: more-bundle2.yaml#/definitions/dupe_name
   i_have_a_ref_with_the_same_name:
     type: object

@@ -160,11 +160,10 @@ my @tests = (
       # begin i_contain_refs_to_same_named_definitions definition
       type       => 'object',
       properties => {
-        foo =>
-          {'$ref' => re(qr/^#\/definitions\/(dupe_name|more-bundle_yaml-.*)$/)},
-        bar => {
-          '$ref' => re(qr/^#\/definitions\/(dupe_name|more-bundle2_yaml-.*)$/)
-        },
+        a =>
+          {'$ref' => re(qr{^\#/definitions/(dupe_name|more-bundle_yaml-.*)$})},
+        b =>
+          {'$ref' => re(qr{^\#/definitions/(dupe_name|more-bundle2_yaml-.*)$})},
       },
     },
     'when encountering references that have the same root name, one is renamed',

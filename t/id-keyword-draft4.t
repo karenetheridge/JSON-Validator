@@ -43,7 +43,7 @@ my $ref = $schema->get('/definitions/R1');
 ok $ref->{$_}, "got $_" for qw($ref %%fqn %%schema);
 is encode_json($ref), '{"$ref":"b.json#bx"}', 'ref encode_json';
 $ref = tied %$ref;
-is $ref->ref, 'b.json#bx', 'ref ref';
+is $ref->ref, 'b.json#bx',                    'ref ref';
 is $ref->fqn, 'http://example.com/b.json#bx', 'ref fqn';
 ok $ref->schema->{definitions}{Y}, 'ref schema';
 
