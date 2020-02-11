@@ -137,4 +137,49 @@ validate_ok {a => 1}, $object_constant;
 validate_ok {b => 1}, $object_constant,
   E('/', q{Does not match const: {"a":1}.});
 
+
+validate_ok {foo => 'bar'},
+  {type => 'object', required => ['foo'], properties => {foo => {}},};
+
+validate_ok {foo => 'bar'},
+  {
+  definitions => {my_true_ref => {}},
+  type        => 'object',
+  required    => ['foo'],
+  properties  => {foo => {'$ref' => '#/definitions/my_true_ref'}},
+  };
+
+# TODO! true, false are draft 6+ only
+validate_ok {foo => 'bar'},
+  {
+  type       => 'object',
+  required   => ['foo'],
+  properties => {foo => JSON::PP::true},
+  };
+
+validate_ok {foo => 'bar'},
+  {
+  definitions => {my_true_ref => JSON::PP::true},
+  type        => 'object',
+  required    => ['foo'],
+  properties  => {foo => {'$ref' => '#/definitions/my_true_ref'}},
+  };
+
+validate_ok {foo => 'bar'},
+  {
+  definitions => {my_false_ref => JSON::PP::false},
+  type        => 'object',
+  required    => ['foo'],
+  properties  => {foo => {'$ref' => '#/definitions/my_false_ref'}},
+  },
+  E('/foo', 'Should not match.');
+
+validate_ok {foo => 'bar'},
+  {
+  type       => 'object',
+  required   => ['foo'],
+  properties => {foo => JSON::PP::false},
+  },
+  E('/foo', 'Should not match.');
+
 done_testing;

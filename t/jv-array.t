@@ -60,4 +60,44 @@ validate_ok [1, 'a', undef], $array_constant;
 validate_ok [1, 'b', undef], $array_constant,
   E('/', q{Does not match const: [1,"a",null].});
 
+validate_ok [1, 'foo', 1.2], {type => 'array', items => {}};
+validate_ok [1, 'foo', 1.2], {type => 'array', items => JSON::PP::true};
+
+validate_ok [1, 'foo', 1.2],
+  {type => 'array', items => [JSON::PP::true, JSON::PP::true, JSON::PP::false]},
+  E('/2', 'Should not match.');
+
+validate_ok [1, 'foo', 1.2], {type => 'array', items => JSON::PP::false},
+  E('/0', 'Should not match.'), E('/1', 'Should not match.'),
+  E('/2', 'Should not match.');
+
+validate_ok [1, 'foo', 1.2],
+  {
+  definitions => {my_true_ref => JSON::PP::true},
+  type        => 'array',
+  items       => {'$ref' => '#/definitions/my_true_ref'},
+  };
+
+validate_ok [1, 'foo', 1.2],
+  {
+  definitions => {my_false_ref => JSON::PP::false},
+  type        => 'array',
+  items       => {'$ref' => '#/definitions/my_false_ref'},
+  },
+  E('/0', 'Should not match.'), E('/1', 'Should not match.'),
+  E('/2', 'Should not match.');
+
+validate_ok [1, 'foo', 1.2],
+  {
+  definitions =>
+    {my_true_ref => JSON::PP::true, my_false_ref => JSON::PP::false},
+  type  => 'array',
+  items => [
+    {'$ref' => '#/definitions/my_true_ref'},
+    {'$ref' => '#/definitions/my_true_ref'},
+    {'$ref' => '#/definitions/my_false_ref'}
+  ],
+  },
+  E('/2', 'Should not match.');
+
 done_testing;

@@ -84,4 +84,12 @@ validate_ok [1, 'a', undef], $array_constant;
 validate_ok [1, 'b', undef], $array_constant,
   E('/', q{Does not match const: [1,"a",null].});
 
+validate_ok JSON::PP::true,  {const => JSON::PP::true};
+validate_ok JSON::PP::false, {const => JSON::PP::false};
+
+validate_ok JSON::PP::false, {const => JSON::PP::true},
+  E('/', 'Does not match const: true.');
+validate_ok JSON::PP::true, {const => JSON::PP::false},
+  E('/', 'Does not match const: false.');
+
 done_testing;
