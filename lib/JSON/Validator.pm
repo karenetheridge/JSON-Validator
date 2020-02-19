@@ -585,15 +585,6 @@ sub _validate_all_of {
   }
 
   return if not @errors;
-
-  # combine all 'type' errors together
-  return E $path,
-    [
-    allOf => type => join('/', uniq map $_->[1]->details->[0], @errors),
-    $errors[-1][1]->details->[2]
-    ]
-    if @errors > 1 and not grep $_->[1]->details->[1] ne 'type', @errors;
-
   return prefix_errors allOf => @errors;
 }
 
