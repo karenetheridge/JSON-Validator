@@ -633,18 +633,7 @@ sub _validate_one_of {
   return if @passed == 1;
   return E $path, [oneOf => 'all_rules_match'] unless @errors;
   return E $path, [oneOf => 'n_rules_match', join(', ', @passed)] if @passed;
-
-  return prefix_errors
-    oneOf => @errors
-    if grep $_->[1]->details->[1] ne 'type',
-    @errors;
-
-  # combine all 'type' errors together
-  return E $path,
-    [
-    oneOf => type => join('/', map $_->[1]->details->[0], @errors),
-    $errors[-1][1]->details->[2]
-    ];
+  return prefix_errors oneOf => @errors;
 }
 
 sub _validate_number_max {
