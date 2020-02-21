@@ -47,7 +47,7 @@ my $schema;
 }
 
 {
-  local $schema->{additionalProperties} = 0;
+  local $schema->{additionalProperties} = false;
   validate_ok {
     number      => 1600,
     street_name => 'Pennsylvania',
