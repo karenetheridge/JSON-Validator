@@ -62,17 +62,21 @@ my $schema = {type => 'object', properties => {v => {type => 'string'}}};
     E('/v', 'Does not match email format.');
 }
 
-{
-  local $TODO
-    = eval 'require Data::Validate::Domain;1' ? undef : 'Missing module';
+SKIP: {
+  skip 'Data::Validate::Domain required for this test', 2
+    if not eval 'require Data::Validate::Domain;1';
+
   local $schema->{properties}{v}{format} = 'hostname';
   validate_ok {v => 'mojolicio.us'}, $schema;
   validate_ok {v => '[]'}, $schema, E('/v', 'Does not match hostname format.');
 }
 
-{
+SKIP: {
   validate_ok {v => decode('UTF-8', '用户@例子.广告')}, $schema;
-  local $TODO = eval 'require Net::IDN::Encode;1' ? undef : 'Missing module';
+
+  skip 'Net::IDN::Encode required for this test', 1
+    if not eval 'require Net::IDN::Encode;1';
+
   local $schema->{properties}{v}{format} = 'idn-email';
   validate_ok {v => decode('UTF-8', '用户@')}, $schema,
     E('/v', 'Does not match idn-email format.');
@@ -98,16 +102,20 @@ my $schema = {type => 'object', properties => {v => {type => 'string'}}};
   validate_ok {v => 'http:///Ῥόδος'}, $schema,
 }
 
-{
-  local $TODO = eval 'require Data::Validate::IP;1' ? undef : 'Missing module';
+SKIP: {
+  skip 'Data::Validate::IP required for this test', 2
+    if not eval 'require Data::Validate::IP;1';
+
   local $schema->{properties}{v}{format} = 'ipv4';
   validate_ok {v => '255.100.30.1'}, $schema;
   validate_ok {v => '300.0.0.0'},    $schema,
     E('/v', 'Does not match ipv4 format.');
 }
 
-{
-  local $TODO = eval 'require Data::Validate::IP;1' ? undef : 'Missing module';
+SKIP: {
+  skip 'Data::Validate::IP required for this test', 2
+    if not eval 'require Data::Validate::IP;1';
+
   local $schema->{properties}{v}{format} = 'ipv6';
   validate_ok {v => '::1'},       $schema;
   validate_ok {v => '300.0.0.0'}, $schema,
