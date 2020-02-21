@@ -36,17 +36,6 @@ my $schema;
 }
 
 {
-  local $TODO = 't/openapi-set-request.t fails because of some oneOf logic';
-  my $data = {};
-  validate_ok $data,
-    {
-    type       => 'object',
-    properties => {number => {type => 'number', default => 42}}
-    };
-  is $data->{number}, 42, 'default value was set';
-}
-
-{
   local $schema->{additionalProperties} = false;
   validate_ok {
     number      => 1600,
