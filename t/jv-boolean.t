@@ -16,9 +16,9 @@ validate_ok {nick => bless({}, 'BoolTestOk')},   $schema;
 validate_ok {nick => bless({}, 'BoolTestFail')}, $schema,
   E('/nick', 'Expected boolean - got BoolTestFail.');
 
-validate_ok j(Mojo::JSON->false), {type => 'boolean'};
-validate_ok j(Mojo::JSON->true),  {type => 'boolean'};
-validate_ok j('foo'),             {type => 'boolean'},
+validate_ok j(false), {type => 'boolean'};
+validate_ok j(true),  {type => 'boolean'};
+validate_ok j('foo'), {type => 'boolean'},
   E('/', 'Expected boolean - got string.');
 validate_ok undef, {properties => {}}, E('/', 'Expected object - got null.');
 

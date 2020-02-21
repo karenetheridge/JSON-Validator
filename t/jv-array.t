@@ -29,7 +29,7 @@ validate_ok [24, 'Sussex',  'Drive'],  $tuple;
 validate_ok [10, 'Downing', 'Street'], $tuple;
 validate_ok [1600, 'Pennsylvania', 'Avenue', 'NW', 'Washington'], $tuple;
 
-$tuple->{additionalItems} = Mojo::JSON->false;
+$tuple->{additionalItems} = false;
 validate_ok [1600, 'Pennsylvania', 'Avenue', 'NW', 'Washington'], $tuple,
   E('/', 'Invalid number of items: 5/4.');
 

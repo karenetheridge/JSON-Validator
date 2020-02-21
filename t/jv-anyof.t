@@ -31,7 +31,7 @@ validate_ok(
             type        => 'array',
             items       => {'$ref' => '#/definitions/simpleTypes'},
             minItems    => 1,
-            uniqueItems => Mojo::JSON::true,
+            uniqueItems => true,
           }
         ]
       },

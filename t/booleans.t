@@ -7,8 +7,8 @@ validate_ok {v => '0'},     $schema, E('/v', 'Expected boolean - got string.');
 validate_ok {v => 'false'}, $schema, E('/v', 'Expected boolean - got string.');
 validate_ok {v => 1},       $schema, E('/v', 'Expected boolean - got number.');
 validate_ok {v => 0.5},     $schema, E('/v', 'Expected boolean - got number.');
-validate_ok {v => Mojo::JSON->true},  $schema;
-validate_ok {v => Mojo::JSON->false}, $schema;
+validate_ok {v => true},  $schema;
+validate_ok {v => false}, $schema;
 
 jv->coerce('booleans');
 validate_ok {v => !!1},     $schema;
@@ -35,9 +35,9 @@ SKIP: {
 }
 
 {
-  validate_ok {disabled => Mojo::JSON->true},
+  validate_ok {disabled => true},
     {properties => {disabled => {type => 'boolean'}}};
-  validate_ok {disabled => Mojo::JSON->false},
+  validate_ok {disabled => false},
     {properties => {disabled => {type => 'boolean'}}};
 }
 
