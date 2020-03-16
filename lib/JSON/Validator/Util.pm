@@ -151,7 +151,6 @@ sub schema_type {
   return _guessed_right(number => $_[1])
     if defined $_[0]->{maximum}
     or defined $_[0]->{minimum};
-  return 'const' if exists $_[0]->{const};
   return '';
 }
 
