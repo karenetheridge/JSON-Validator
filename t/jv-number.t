@@ -20,6 +20,8 @@ for my $x ([-0.5, 2.7], [true, true]) {
 }
 delete @{$schema->{properties}{mynumber}}{qw(exclusiveMaximum exclusiveMinimum)};
 
+validate_ok 4, { exclusiveMaximum => 3 }, E('/', '4 >= maximum(3)');
+
 my $numeric_constant = {type => 'number', const => 2.1};
 validate_ok 2.1, $numeric_constant;
 validate_ok 1, $numeric_constant, E('/', q{Does not match const: 2.1.});
