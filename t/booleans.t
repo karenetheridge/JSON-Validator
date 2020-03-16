@@ -10,17 +10,6 @@ validate_ok {v => 0.5},     $schema, E('/v', 'Expected boolean - got number.');
 validate_ok {v => Mojo::JSON->true},  $schema;
 validate_ok {v => Mojo::JSON->false}, $schema;
 
-jv->coerce('booleans');
-validate_ok {v => !!1},     $schema;
-validate_ok {v => !!0},     $schema;
-validate_ok {v => 'false'}, $schema;
-validate_ok {v => 'true'},  $schema;
-validate_ok {v => 1},       $schema;
-validate_ok {v => 0.5},     $schema;
-validate_ok {v => '1'},     $schema, E('/v', 'Expected boolean - got string.');
-validate_ok {v => '0'},     $schema, E('/v', 'Expected boolean - got string.');
-validate_ok {v => ''},      $schema, E('/v', 'Expected boolean - got string.');
-
 SKIP: {
   skip 'YAML::XS is not installed', 1 unless JSON::Validator->YAML_SUPPORT;
   my $data = jv->_load_schema_from_text(\"---\nv: true\n");
@@ -40,5 +29,17 @@ SKIP: {
   validate_ok {disabled => Mojo::JSON->false},
     {properties => {disabled => {type => 'boolean'}}};
 }
+
+# WARNING! coercions are on for the remainder of this test!
+jv->coerce('booleans');
+validate_ok {v => !!1},     $schema;
+validate_ok {v => !!0},     $schema;
+validate_ok {v => 'false'}, $schema;
+validate_ok {v => 'true'},  $schema;
+validate_ok {v => 1},       $schema;
+validate_ok {v => 0.5},     $schema;
+validate_ok {v => '1'},     $schema, E('/v', 'Expected boolean - got string.');
+validate_ok {v => '0'},     $schema, E('/v', 'Expected boolean - got string.');
+validate_ok {v => ''},      $schema, E('/v', 'Expected boolean - got string.');
 
 done_testing;

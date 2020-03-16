@@ -22,6 +22,7 @@ my $int_constant = {type => 'integer', const => 2};
 validate_ok 2, $int_constant;
 validate_ok 1, $int_constant, E('/', q{Does not match const: 2.});
 
+# WARNING! coercions are on for the remainder of this test!
 jv->coerce('num');
 validate_ok {mynumber => '2'},    $schema;
 validate_ok {mynumber => '2xyz'}, $schema,
