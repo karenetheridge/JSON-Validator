@@ -753,8 +753,6 @@ sub _validate_format {
   return E $path, [format => $schema->{format}, $err];
 }
 
-sub _validate_type_any { }
-
 sub _validate_type_array {
   my ($self, $data, $path, $schema) = @_;
   my @errors;
@@ -790,7 +788,7 @@ sub _validate_type_array {
   }
 
   if (ref $schema->{items} eq 'ARRAY') {
-    my $additional_items = $schema->{additionalItems} // {type => 'any'};
+    my $additional_items = $schema->{additionalItems} // {};
     my @rules            = @{$schema->{items}};
 
     if ($additional_items) {

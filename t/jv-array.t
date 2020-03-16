@@ -121,4 +121,12 @@ validate_ok [1, 'hello'],
   {contains => {const => 1}, items => [{type => 'string'}]},
   E('/0', 'Expected string - got number.');
 
+validate_ok [1], {items => [{const => 1}], additionalItems => false};
+
+validate_ok [1, 2], {items => [{const => 1}], additionalItems => false},
+  E('/', 'Invalid number of items: 2/1.');
+
+validate_ok [1, 2],
+  {items => [{const => 1}], additionalItems => {type => 'integer'}};
+
 done_testing;
