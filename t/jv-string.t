@@ -23,9 +23,6 @@ like +join('', jv->validate({nick => '[nick]'})),
 delete $schema->{properties}{nick}{pattern};
 validate_ok {nick => 'Déjà vu'}, $schema;
 
-jv->coerce('str');
-validate_ok {nick => 1000}, $schema;
-
 # https://github.com/mojolicious/json-validator/issues/134
 validate_ok(
   {credit_card_number => '5252525252525252'},
@@ -46,5 +43,9 @@ validate_ok 'bar', $string_constant, E('/', q{Does not match const: "foo".});
 my $empty_string_constant = {type => 'string', const => ''};
 validate_ok '', $empty_string_constant;
 validate_ok 'bar', $empty_string_constant, E('/', q{Does not match const: "".});
+
+# WARNING! coercions are on for the remainder of this test!
+jv->coerce('str');
+validate_ok {nick => 1000}, $schema;
 
 done_testing;
