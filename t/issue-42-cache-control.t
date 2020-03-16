@@ -4,6 +4,7 @@ use Mojo::File 'tempdir';
 use Test::More;
 
 plan skip_all => 'TEST_ONLINE=1' unless $ENV{TEST_ONLINE};
+plan skip_all => 'unset NO_NETWORK_TESTING' if $ENV{NO_NETWORK_TESTING};
 
 $ENV{JSON_VALIDATOR_CACHE_PATH} = '/tmp/whatever';
 my $jv        = JSON::Validator->new;

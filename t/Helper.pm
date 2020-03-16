@@ -24,7 +24,7 @@ sub joi_ok {
     or Test::More::diag(encode_json(\@errors));
 }
 
-sub jv { state $obj = $ENV{TEST_VALIDATOR_CLASS}->new }
+sub jv { state $obj = $ENV{TEST_VALIDATOR_CLASS}->new(ua => undef) }
 
 sub validate_ok {
   my ($data, $schema, @expected) = @_;
