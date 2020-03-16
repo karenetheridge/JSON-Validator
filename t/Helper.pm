@@ -30,6 +30,9 @@ sub validate_ok {
   my ($data, $schema, @expected) = @_;
   my $description
     ||= @expected ? "errors: @expected" : "valid: " . encode_json($data);
+
+  my ($data_before, $schema_before) = map encode_json($_), $data, $schema;
+
   my @errors = jv()->schema($schema)->validate($data);
   local $Test::Builder::Level = $Test::Builder::Level + 1;
   Test::More::is_deeply(
@@ -37,6 +40,13 @@ sub validate_ok {
     [map { $_->TO_JSON } sort { $a->path cmp $b->path } @expected],
     $description)
     or Test::More::diag(encode_json(\@errors));
+
+  my ($data_after, $schema_after) = map encode_json($_), $data, $schema;
+
+  is($data_after, $data_before, 'validate() did not mutate data')
+    if not jv()->coerce and $data_before ne $data_after;
+  is($schema_after, $schema_before, 'validate() did not mutate schema')
+    if $schema_before ne $schema_after;
 }
 
 sub import {
