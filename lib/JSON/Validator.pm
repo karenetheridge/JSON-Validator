@@ -532,13 +532,13 @@ sub _validate {
 
   if (exists $schema->{const}) {
     push @errors,
-      $self->_validate_type_const($to_json ? $$to_json : $_[1], $path, $schema);
+      $self->_validate_const($to_json ? $$to_json : $_[1], $path, $schema);
     return @errors if @errors;
   }
 
   if ($schema->{enum}) {
     push @errors,
-      $self->_validate_type_enum($to_json ? $$to_json : $_[1], $path, $schema);
+      $self->_validate_enum($to_json ? $$to_json : $_[1], $path, $schema);
     return @errors if @errors;
   }
 
@@ -724,7 +724,7 @@ sub _validate_number_min {
   return @errors;
 }
 
-sub _validate_type_enum {
+sub _validate_enum {
   my ($self, $data, $path, $schema) = @_;
   my $enum = $schema->{enum};
   my $m    = data_checksum $data;
@@ -738,7 +738,7 @@ sub _validate_type_enum {
   return E $path, [enum => enum => $enum];
 }
 
-sub _validate_type_const {
+sub _validate_const {
   my ($self, $data, $path, $schema) = @_;
   my $const = $schema->{const};
 
@@ -961,12 +961,6 @@ sub _validate_type_object {
       my @e = $self->_validate($data->{$k}, json_pointer($path, $k), $r);
       push @errors, @e;
       next if @e or !is_type $r, 'HASH';
-      push @errors,
-        $self->_validate_type_enum($data->{$k}, json_pointer($path, $k), $r)
-        if $r->{enum};
-      push @errors,
-        $self->_validate_type_const($data->{$k}, json_pointer($path, $k), $r)
-        if $r->{const};
     }
   }
 

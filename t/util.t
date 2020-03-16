@@ -50,7 +50,6 @@ is schema_type({items                => {}}), 'array', 'schema_type array';
 is schema_type({items     => {}}, {}), '', 'schema_type not array';
 is schema_type({minLength => 4}), 'string', 'schema_type string';
 is schema_type({multipleOf => 2}),       'number', 'schema_type number';
-is schema_type({const      => 42}),      'const',  'schema_type const';
 is schema_type({cannot     => 'guess'}), '',       'schema_type no idea';
 
 subtest 'data_checksum with Sereal::Encoder' => sub {

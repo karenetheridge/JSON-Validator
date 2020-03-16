@@ -90,4 +90,9 @@ validate_ok false, {const => false};
 validate_ok false, {const => true},  E('/', 'Does not match const: true.');
 validate_ok true,  {const => false}, E('/', 'Does not match const: false.');
 
+validate_ok
+  { foo => 1 },
+  { required => ['foo'], const => { foo => 1, bar => 2 } },
+  E('/', 'Does not match const: {"bar":2,"foo":1}.');
+
 done_testing;
