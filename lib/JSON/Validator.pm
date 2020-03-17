@@ -375,6 +375,9 @@ sub _register_schema {
   $self->{schemas}{$fqn} = $schema;
 }
 
+my $resolve_ref_count = 0;  # this counts the number of times we have to *actually* resolve a ref
+my $sub_calls = 0;  # this is the total number of times we are called (which may be higher).
+
 # _resolve() method is used to convert all "id" into absolute URLs and
 # resolve all the $ref's that we find inside JSON Schema specification.
 sub _resolve {
@@ -447,6 +450,7 @@ sub _resolve {
   # Need to register "id":"..." before resolving "$ref":"..."
   $self->_resolve_ref(@$_) for @refs;
 
+print STDERR "### at end of _resolve for $id, _resolve_ref called $sub_calls times to resolve ::Refs $resolve_ref_count times.\n";
   return $schema;
 }
 
@@ -465,12 +469,14 @@ sub _location_to_abs {
 }
 
 sub _resolve_ref {
+++$sub_calls;
   my ($self, $topic, $url) = @_;
   return if tied %$topic;
 
   my $other = $topic;
   my ($fqn, $ref, @guard);
 
+++$resolve_ref_count;
   while (1) {
     last if is_type $other, 'BOOL';
     $ref = $other->{'$ref'};
