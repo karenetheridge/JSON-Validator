@@ -13,4 +13,7 @@ is $jv->schema->get('/title'), 'Example Schema', 'got example schema';
 is $jv->{schemas}{$spec}{title}, 'Example Schema',
   'registered this schema for reuse under the filename we loaded it from';
 
+is $jv->{schemas}{'http://localhost:12345/t/spec/person.json'}{title}, 'Example Schema',
+  'registered this schema for reuse under the canonical identifier';
+
 done_testing;

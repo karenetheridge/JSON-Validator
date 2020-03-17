@@ -1,4 +1,5 @@
 {
+  "id": "http://localhost:12345/t/spec/person.json",
   "title": "Example Schema",
   "type": "object",
   "required": ["firstName", "lastName"],
