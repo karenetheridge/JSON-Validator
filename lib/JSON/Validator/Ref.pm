@@ -10,11 +10,15 @@ sub schema { $_[0]->{"%%schema"} }
 
 # Make it look like there is only one key in the hash
 sub EXISTS {
-  exists $_[0]->{$_[1]} || exists $_[0]->{"%%schema"}{$_[1]};
+  exists $_[0]->{$_[1]}
+    || CORE::ref $_[0]->{"%%schema"} eq 'HASH'
+    && exists $_[0]->{"%%schema"}{$_[1]};
 }
 
 sub FETCH {
-  exists $_[0]->{$_[1]} ? $_[0]->{$_[1]} : $_[0]->{"%%schema"}{$_[1]};
+  exists $_[0]->{$_[1]}
+    ? $_[0]->{$_[1]}
+    : CORE::ref $_[0]->{"%%schema"} eq 'HASH' && $_[0]->{"%%schema"}{$_[1]};
 }
 sub FIRSTKEY {'$ref'}
 sub KEYS     {'$ref'}
