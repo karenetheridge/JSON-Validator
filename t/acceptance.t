@@ -18,9 +18,8 @@ my $host_port = $t->ua->server->url->host_port;
 
 my $test_only_re = $ENV{TEST_ONLY} || '';
 my $todo_re      = join('|',
-  'change resolution scope - changed scope ref valid',
-  $ENV{TEST_ONLINE} ? () : ('remote ref'),
-);
+  # insert failing tests' descriptions here
+) || '^$';
 
 for my $file (sort $test_suite->list->each) {
   for my $group (@{decode_json($file->slurp)}) {
