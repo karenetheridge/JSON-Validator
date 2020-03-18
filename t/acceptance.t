@@ -17,11 +17,14 @@ $t->get_ok('/integer.json')->status_is(200);
 my $host_port = $t->ua->server->url->host_port;
 
 my $test_only_re = $ENV{TEST_ONLY} || '';
-my $todo_re      = join('|',
-  'change resolution scope - changed scope ref valid',
-  'change resolution scope - changed scope ref invalid',
-  $ENV{TEST_ONLINE} ? () : ('remote ref'),
-);
+my $todo_re      = join(
+  '|',
+  #'change resolution scope - changed scope ref valid',
+  #'change resolution scope - changed scope ref invalid',
+  #$ENV{TEST_ONLINE} ? () : ('remote ref'),
+
+  # insert failing test descriptions here
+) || '^$';
 
 my $jv = JSON::Validator->new->ua($t->ua);
 for my $file (sort $test_suite->list->each) {

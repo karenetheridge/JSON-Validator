@@ -23,7 +23,7 @@ my $schema = JSON::Validator::Schema::Draft7->new({
 is $schema->bundle({replace => 1})->data->{surname}{type}, 'string',
   "schema->bundle";
 
-note 'Run multiple times to make sure _reset() works';
+note 'Run multiple times to make sure _resolve level works';
 for my $n (1 .. 3) {
   note "[$n] replace=1";
   $bundled = $jv->bundle({
