@@ -284,7 +284,7 @@ sub _load_schema {
     return $self->_load_schema_from_text(\$file->slurp),
       CASE_TOLERANT ? path(lc $file) : $file;
   }
-  elsif ($url =~ m!^/! and $self->ua->server->app) {
+  elsif ($url =~ m!^/! and $self->ua and $self->ua->server->app) {
     warn "[JSON::Validator] Loading schema from URL $url\n" if DEBUG;
     return $self->_load_schema_from_url(Mojo::URL->new($url)->fragment(undef)),
       "$url";
@@ -319,6 +319,8 @@ sub _load_schema_from_url {
     next unless -r $path;
     return $self->_load_schema_from_text(\$path->slurp);
   }
+
+  confess "Unable to load schema '$url'" if not $self->ua;
 
   my $tx  = $self->ua->get($url);
   my $err = $tx->error && $tx->error->{message};
