@@ -475,7 +475,8 @@ print STDERR "### at end of _resolve for $id, _resolve_ref called $sub_calls tim
 
 sub _resolve_ref {
 ++$sub_calls;
-  my ($self, $topic, $base_uri) = @_;
+  my ($self, $topic, $base_uri) = @_;   # base_uri is always a Mojo::URL
+
   return if tied %$topic;
 
   my $other = $topic;
