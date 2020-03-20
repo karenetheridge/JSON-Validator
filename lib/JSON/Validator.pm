@@ -264,8 +264,7 @@ sub _load_schema {
     return $self->_load_schema_from_text(\$url), '';
   }
 
-  die '_load_schema called with a non-empty fragment' if $url =~ /#./;
-  $url =~ s/#$//;
+  $url =~ s/#.*$//;
 
   if ($url =~ m!^https?://!) {
     return $self->{schemas}{$url}, $url if exists $self->{schemas}{$url};
@@ -399,7 +398,8 @@ my $sub_calls = 0;  # this is the total number of times we are called (which may
 sub _resolve {
   my ($self, $schema) = @_;
   my $id_key = $self->_id_key;
-  my $id;
+  my $id = '';
+  my $schema_uri = '';
 
   local $self->{level} = $self->{level} || 0;
   delete $_[0]->{schemas}{''} unless $self->{level};
@@ -418,9 +418,7 @@ sub _resolve {
     return $schema;
   }
   else {
-    ($schema, $id) = $self->_load_schema($schema);
-    $id = $schema->{$id_key} if $schema->{$id_key};
-    $self->_register_schema($schema, $id) if $id;
+    ($schema, $id) = $self->_load_schema($schema_uri = $schema);
   }
 
   unless ($self->{level}) {
@@ -458,6 +456,10 @@ sub _resolve {
 
       if ($topic->{$id_key} and !ref $topic->{$id_key}) {
         my $fqn = Mojo::URL->new($topic->{$id_key});
+
+        confess 'location-independent identifiers must not have a scheme or path'
+          if $fqn =~ /.#./ and $self->{version} < 6;
+
         $fqn = $fqn->to_abs($base) unless $fqn->is_abs;
         $self->_register_schema($topic, url_unescape $fqn);
         $base = $fqn;
@@ -470,7 +472,18 @@ sub _resolve {
   # Need to register "id":"..." before resolving "$ref":"..."
   $self->_resolve_ref(@$_) for @refs;
 
-print STDERR "### at end of _resolve for $id, _resolve_ref called $sub_calls times to resolve ::Refs $resolve_ref_count times.\n";
+  if ($schema_uri =~ /(.*)#(.+)$/) {
+    my ($base, $fragment) = ($1, $2);
+    if ($fragment =~ m!^/!) {
+      $schema = Mojo::JSON::Pointer->new($schema)->get($fragment);
+    }
+    else {
+      # use the anchor that was already registered
+      $schema = $self->{schemas}{$schema_uri};
+    }
+    confess "could not find $id_key for '$fragment' within '$base'!" if not defined $schema;
+  }
+
   return $schema;
 }
 
@@ -493,11 +506,25 @@ sub _resolve_ref {
     last if !$ref or ref $ref;
 
     $fqn = Mojo::URL->new($ref)->to_abs($base_uri);
-    my $location = $base_uri = $fqn->clone->fragment(undef);
-    $location = url_unescape $location;
-    my $pointer = $fqn->fragment;
-    $other   = $self->_resolve($location);
+    $base_uri = $fqn->clone->fragment(undef);
+    my $location = $fqn->clone;
 
+    if (not $fqn->fragment or $fqn->fragment =~ m!^/!) {
+      $location = url_unescape $location->fragment(undef);
+      $other = $self->{schemas}{$location} // $self->_resolve($location);
+    }
+    else {
+      $location = url_unescape $location;
+      if (exists $self->{schemas}{$base_uri}) {
+        $other = $self->{schemas}{$location};
+        confess "cannot find anchor ", $fqn->fragment, " in $base_uri" if not defined $other;
+      }
+      else {
+        $other = $self->_resolve($location);
+      }
+    }
+
+    my $pointer = $fqn->fragment;
     if ($pointer and $pointer =~ m!^/!) {
       $other = Mojo::JSON::Pointer->new($other)->get($pointer);
       confess

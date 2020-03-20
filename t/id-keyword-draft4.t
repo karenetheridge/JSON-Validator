@@ -3,6 +3,7 @@ use JSON::Validator;
 use Mojo::JSON 'encode_json';
 use Test::Mojo;
 use Test::More;
+use Scalar::Util 'refaddr';
 
 my ($base_url, $jv, $t, @e);
 
@@ -45,7 +46,19 @@ is encode_json($ref), '{"$ref":"b.json#bx"}', 'ref encode_json';
 $ref = tied %$ref;
 is $ref->ref, 'b.json#bx',                    'ref ref';
 is $ref->fqn, 'http://example.com/b.json#bx', 'ref fqn';
-ok $ref->schema->{definitions}{Y}, 'ref schema';
+
+{
+  local $TODO = 'plain-name fragment #bx resolves correctly';
+  is encode_json($ref->schema), '{"id":"#bx"}', 'ref schema';
+
+  is
+    refaddr($jv->{schemas}{'http://example.com/b.json#bx'}),
+    refaddr($jv->{schemas}{'http://example.com/relative-to-the-root.json'}{definitions}{B}{definitions}{X}),
+    'registered #bx properly';
+}
+# ^^ and this new test passes with the new changes.
+
+ok $ref->schema->{definitions}{Y}, 'ref schema';    #<-- this test should be removed
 
 eval { $jv->load_and_validate_schema("${base_url}invalid-fragment.json") };
 like $@, qr{cannot have a fragment}, 'Root id cannot have a fragment'
