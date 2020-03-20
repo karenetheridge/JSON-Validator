@@ -507,30 +507,8 @@ sub _resolve_ref {
 
     $fqn = Mojo::URL->new($ref)->to_abs($base_uri);
     $base_uri = $fqn->clone->fragment(undef);
-    my $location = $fqn->clone;
+    $other = $self->_resolve(url_unescape $fqn);
 
-    if (not $fqn->fragment or $fqn->fragment =~ m!^/!) {
-      $location = url_unescape $location->fragment(undef);
-      $other = $self->{schemas}{$location} // $self->_resolve($location);
-    }
-    else {
-      $location = url_unescape $location;
-      if (exists $self->{schemas}{$base_uri}) {
-        $other = $self->{schemas}{$location};
-        confess "cannot find anchor ", $fqn->fragment, " in $base_uri" if not defined $other;
-      }
-      else {
-        $other = $self->_resolve($location);
-      }
-    }
-
-    my $pointer = $fqn->fragment;
-    if ($pointer and $pointer =~ m!^/!) {
-      $other = Mojo::JSON::Pointer->new($other)->get($pointer);
-      confess
-        qq[Possibly a typo in schema? Could not find "$pointer" in "$location" ($ref)]
-        if not defined $other;
-    }
   }
 
   tie %$topic, 'JSON::Validator::Ref', $other, $topic->{'$ref'}, url_unescape($fqn);
