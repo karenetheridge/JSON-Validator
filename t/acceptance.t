@@ -19,6 +19,7 @@ my $host_port = $t->ua->server->url->host_port;
 my $test_only_re = $ENV{TEST_ONLY} || '';
 my $todo_re      = join('|',
   'change resolution scope - changed scope ref valid',
+  'change resolution scope - changed scope ref invalid',
   $ENV{TEST_ONLINE} ? () : ('remote ref'),
 );
 
@@ -49,6 +50,7 @@ HERE
 
       my $e = $@ || join ', ', @errors;
       local $TODO = $descr =~ /$todo_re/ ? 'TODO' : undef;
+      fail('exception: '.$@.' at '.$descr) if $@;
       note "ERROR: $e" if $e;
       is $e ? 'invalid' : 'valid', $test->{valid} ? 'valid' : 'invalid', $descr;
     }
