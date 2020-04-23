@@ -87,6 +87,13 @@ for my $path (
       keys %{$bundled->{definitions}}], \@expected,
     "right definitions in disk spec @$path"
     or diag join ', ', sort keys %{$bundled->{definitions}};
+
+
+use Data::Dumper;
+local $Data::Dumper::Sortkeys = 1;
+local $Data::Dumper::Maxdepth = 4;
+print STDERR "### bundle looks like ", Dumper($bundled);
+
 }
 
 note 'ensure filenames with funny characters not mangled by Mojo::URL';
